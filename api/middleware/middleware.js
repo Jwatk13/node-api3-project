@@ -3,7 +3,11 @@ const Users = require('../users/users-model');
 function logger(req, res, next) {
   // DO YOUR MAGIC
   //still needs time stamp added to the log
-  console.log(req.method, req.originalUrl);
+  const timeStamp = new Date().toLocaleString()
+  const method = req.method
+  const url = req.originalUrl
+
+  console.log(`[${timeStamp}], ${method}, to ${url}`);
   next();
 }
 
@@ -33,6 +37,14 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
   // DO YOUR MAGIC
+  if (typeof req.body.text !== 'string' || req.body.text.trim() === '') {
+    next({ message: 'missing required text field', status: 400 });
+    return;
+  }
+  req.text = {
+      text: req.body.text.trim(),
+  };
+  next();
 }
 
 // do not forget to expose these functions to other modules

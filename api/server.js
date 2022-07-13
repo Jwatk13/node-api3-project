@@ -9,10 +9,11 @@ const { logger } = require('./middleware/middleware');
 // remember express by default cannot parse JSON in request bodies
 server.use(express.json());
 
-server.use('/api/users', usersRouter);
 
 // global middlewares and the user's router need to be connected here
 server.use(logger)
+server.use('/api/users', usersRouter);
+
 
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
@@ -21,10 +22,10 @@ server.get('/', (req, res) => {
 server.use((error, req, res, next) => {
   console.log(error);
   res.status(error.status || 500).json({
-    message: error.message || 'internal server error'
+    customMessage: 'Somthing tragic happened inside Posts router',
+    message: error.message,
+    stack: error.stack,
   });
 });
-
-//commit issue////ongoing...
 
 module.exports = server;
