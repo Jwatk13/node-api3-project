@@ -10,8 +10,8 @@ const { validateUserId, validateUser, validatePost } = require('../middleware/mi
 
 const router = express.Router();
 
+//GETS ALL USERS
 router.get('/', (req, res, next) => {
-  // RETURN AN ARRAY WITH ALL THE USERS
   Users.get(req.query)
     .then(users => {
       res.status(200).json(users);
@@ -19,36 +19,47 @@ router.get('/', (req, res, next) => {
     .catch(next)
 });
 
-/////////another commit bug very strange
+//GETTING USER BY ID
 router.get('/:id', validateUserId, (req, res) => {
-  // RETURN THE USER OBJECT
-  // this needs a middleware to verify user id
-  // console.log(req.user)
+  res.json(req.user)
 });
 
-router.post('/', validateUser, (req, res) => {
-  // RETURN THE NEWLY CREATED USER OBJECT
-  // this needs a middleware to check that the request body is valid
+//ADDING A NEW USER
+router.post('/', validateUser, (req, res, next) => {
+  Users.insert(req.name)
+    .then(newUser => {
+      res.status(201).json(newUser)
+    })
+    .catch(next)
 });
 
-router.put('/:id', validateUserId, validateUser, (req, res) => {
-  // RETURN THE FRESHLY UPDATED USER OBJECT
-  // this needs a middleware to verify user id
-  // and another middleware to check that the request body is valid
-  // console.log(req.user)
-  // console.log(req.newUser)
+//UPDATING THE USER
+router.put('/:id', validateUserId, validateUser, (req, res, next) => {
+Users.update(req.params.id, req.name)
+  .then(user => {
+    res.status(200).json(user);
+  })
+  .catch(next)
 });
 
-router.delete('/:id', validateUserId, (req, res) => {
-  // RETURN THE FRESHLY DELETED USER OBJECT
-  // this needs a middleware to verify user id
+//DELETING A USER
+router.delete('/:id', validateUserId, (req, res, next) => {
+  Users.remove(req.params.id)
+    .then(count => {
+      if (count > 0) {
+        res.status(200).json(req.user)
+      }
+    })
+    .catch(next)
 });
 
+//GETTING USER POSTS BY ID
 router.get('/:id/posts', validateUserId, (req, res) => {
   // RETURN THE ARRAY OF USER POSTS
   // this needs a middleware to verify user id
 });
 
+//ADDING A POST
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // RETURN THE NEWLY CREATED USER POST
   // this needs a middleware to verify user id

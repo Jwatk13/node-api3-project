@@ -29,7 +29,7 @@ function validateUser(req, res, next) {
     next({ message: 'missing required name field', status: 400 });
     return;
   }
-  req.newUser = {
+  req.name = {
       name: req.body.name.trim(),
   };
   next();
